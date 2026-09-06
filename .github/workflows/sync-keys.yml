@@ -1,0 +1,28 @@
+name: Sync Key List
+
+on:
+  repository_dispatch:
+    types: [sync-keys]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.SYNC_TOKEN }}
+
+      - name: Write key list from payload
+        run: |
+          printf '%s' '${{ github.event.client_payload.key_list }}' > list
+          echo "Key list updated:"
+          cat list
+
+      - name: Commit and push
+        run: |
+          git config user.name "sentinel-bot"
+          git config user.email "bot@sentinel.rip"
+          git add list
+          git diff --staged --quiet || git commit -m "chore: sync key list [automated]"
+          git push
