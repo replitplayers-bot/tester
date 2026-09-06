@@ -15,7 +15,7 @@ jobs:
 
       - name: Write key list from payload
         run: |
-          printf '%s' '${{ github.event.client_payload.key_list }}' > list
+          echo '${{ github.event.client_payload.key_list }}' | tr -d '\r' > list
           echo "Key list updated:"
           cat list
 
